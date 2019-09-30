@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn import preprocessing, metrics
+from sklearn import preprocessing
 from sklearn.neighbors import KNeighborsClassifier
-import matplotlib.pyplot as plt
+
 
 
 dataset = pd.read_csv("telco_data.csv", delimiter=',')
@@ -31,26 +31,18 @@ X_train = scaler.fit_transform(X_train)
 X_test = scaler.fit_transform(X_test)
 
 
-amount_of_neighbors = range(1, 10, 1)
-train_acc = []
+# amount_of_neighbors = range(1, 10, 1)
 test_acc = []
-for k in amount_of_neighbors:
-    classifier = KNeighborsClassifier(n_neighbors=k, weights="distance", metric="manhattan")
-    classifier.fit(X_train, y_train)
-    train_acc.append(classifier.score(X_train, y_train))
-    test_acc.append(classifier.score(X_test, y_test))
 
-print(train_acc)
+# Classifier to setup amount of neighbors and weighting type
+classifier = KNeighborsClassifier(n_neighbors=2, weights="uniform")
+classifier.fit(X_train, y_train)
+
+test_acc.append(classifier.score(X_test, y_test))
+
+# Use the training data to train the data then predict
 print(test_acc)
-"""
-plt.title('Churn Predictions')
-plt.plot(amount_of_neighbors, test_acc, label='Testing Accuracy')
-plt.plot(amount_of_neighbors, train_acc, label='Training Accuracy')
-plt.legend()
-plt.xlabel('Number of Neighbors')
-plt.ylabel('Accuracy')
-plt.show()
-"""
+
 
 
 
