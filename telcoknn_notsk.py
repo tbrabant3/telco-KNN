@@ -29,6 +29,8 @@ def load_dataset(filename, split, training_set=[], test_set=[]):
             le.fit(dataframe[col])
             dataframe[col] = le.transform(dataframe[col])
 
+        dataframe[[col]] = dataframe[[col]].div(dataframe[[col]].max())
+
     dataframe = shuffle(dataframe)
     count_row = dataframe.shape[0]
     split_point = int(np.ceil(count_row * split))
@@ -36,7 +38,7 @@ def load_dataset(filename, split, training_set=[], test_set=[]):
     train = dataframe.iloc[:split_point]
     test = dataframe.iloc[split_point:]
 
-    # Iterate over each row and append
+    # iterate over each row and append
     for index, rows in train.iterrows():
         training_set.append(list(rows))
 
@@ -89,8 +91,8 @@ def main():
     test_set = []
 
     split = 0.67
-    load_dataset('Telco-Customer-Churn_training_data.csv', split, training_set, test_set)
- 
+    load_dataset('telco_data.csv', split, training_set, test_set)
+
     print('Train set: ' + repr(len(training_set)))
     print('Test set: ' + repr(len(test_set)))
 
