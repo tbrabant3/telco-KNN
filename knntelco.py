@@ -35,12 +35,14 @@ amount_of_neighbors = range(1, 10, 1)
 train_acc = []
 test_acc = []
 for k in amount_of_neighbors:
-    classifier = KNeighborsClassifier(n_neighbors=k)
+    classifier = KNeighborsClassifier(n_neighbors=k, weights="distance", metric="manhattan")
     classifier.fit(X_train, y_train)
     train_acc.append(classifier.score(X_train, y_train))
     test_acc.append(classifier.score(X_test, y_test))
 
-
+print(train_acc)
+print(test_acc)
+"""
 plt.title('Churn Predictions')
 plt.plot(amount_of_neighbors, test_acc, label='Testing Accuracy')
 plt.plot(amount_of_neighbors, train_acc, label='Training Accuracy')
@@ -48,7 +50,7 @@ plt.legend()
 plt.xlabel('Number of Neighbors')
 plt.ylabel('Accuracy')
 plt.show()
-
+"""
 
 
 
