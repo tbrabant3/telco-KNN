@@ -1,4 +1,4 @@
-
+# ---- telcoknn_notsk is the version to look at, this one is for the iris data
 # Author: Tyler Brabant
 # Class:  CSI-270-01
 # Certification of Authenticity:
