@@ -29,6 +29,7 @@ def load_dataset(filename, split, training_set=[], test_set=[]):
             le.fit(dataframe[col])
             dataframe[col] = le.transform(dataframe[col])
 
+        # normalize data
         dataframe[[col]] = dataframe[[col]].div(dataframe[[col]].max())
 
     dataframe = shuffle(dataframe)
@@ -46,20 +47,21 @@ def load_dataset(filename, split, training_set=[], test_set=[]):
         test_set.append(list(rows))
 
 
-def euclidean_distance(instance1, instance2, length):
-    distance = 0
-    for x in range(length):
-        distance += pow((instance1[x] - instance2[x]), 2)
-    return np.sqrt(distance)
+def euclidean_distance(instance1, instance2):
+    sub = np.array(instance1) - np.array(instance2)
+    square = np.square(sub, dtype=np.float64)
+    sum = np.sum(square.all(), dtype=np.float64)
+
+    return np.sqrt(sum)
 
 
 def get_neighbors(training_set, test_instance, k):
     distances = []
-    length = len(test_instance) - 1
     for x in range(len(training_set)):
-        dist = euclidean_distance(test_instance, training_set[x], length)
+        dist = euclidean_distance(test_instance, training_set[x])
         distances.append((training_set[x], dist))
     distances.sort(key=operator.itemgetter(1))
+
     neighbors = []
     for x in range(k):
         neighbors.append(distances[x][0])
