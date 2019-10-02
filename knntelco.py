@@ -16,45 +16,48 @@ from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 from sklearn.neighbors import KNeighborsClassifier
 
+def loadDataset(file):
+    dataset = pd.read_csv(file, delimiter=',')
+    X = dataset.iloc[:, :-1]
+    y = dataset.iloc[:, -1]
 
-dataset = pd.read_csv("telco_data.csv", delimiter=',')
-X = dataset.iloc[:, :-1]
-y = dataset.iloc[:, -1]
+    # Transform the TotalCharges column to a column with numbers instead of a space
+    dataset.replace(r"^\s*$", 0, regex=True, inplace=True)
+    dataset["TotalCharges"] = dataset["TotalCharges"].astype('float64')
 
-# Transform the TotalCharges column to a column with numbers instead of a space
-dataset.replace(r"^\s*$", 0, regex=True, inplace=True)
-dataset["TotalCharges"] = dataset["TotalCharges"].astype('float64')
-
-# Drop specific columns that don't matter
-X = X.drop(columns=['customerID'])
-
-# Encode the data
-label_encoder = preprocessing.LabelEncoder()
-for col in X.columns:
-    X[col] = label_encoder.fit_transform(X[col])
-
-# Split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
-
-# Scale / Normalize data
-scaler = preprocessing.StandardScaler(with_mean=True, with_std=True)
-
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.fit_transform(X_test)
+    # Drop specific columns that don't matter
+    X = X.drop(columns=['customerID'])
+    return X, y
 
 
-# amount_of_neighbors = range(1, 10, 1)
-test_acc = []
-
-# Classifier to setup amount of neighbors and weighting type
-classifier = KNeighborsClassifier(n_neighbors=2, weights="uniform")
-classifier.fit(X_train, y_train)
-
-test_acc.append(classifier.score(X_test, y_test))
-
-# Use the training data to train the data then predict
-print(test_acc)
+def encode(X):
+    # Encode the data
+    label_encoder = preprocessing.LabelEncoder()
+    for col in X.columns:
+        X[col] = label_encoder.fit_transform(X[col])
 
 
+def standardScale(test, train):
+    # Scale / Normalize data
+    scaler = preprocessing.StandardScaler(with_mean=True, with_std=True)
+    train = scaler.fit_transform(train)
+    test = scaler.fit_transform(test)
+    return train, test
+
+def main():
+    X, y = loadDataset("telco_data.csv")
+    encode(X)
+
+    # Split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=30)
+    X_train, X_test = standardScale(X_test, X_train)
+
+    # Classifier to setup amount of neighbors and weighting type
+    classifier = KNeighborsClassifier(n_neighbors=3, weights="distance")
+    classifier.fit(X_train, y_train)
+
+    print(classifier.score(X_test, y_test))
 
 
+if __name__ == '__main__':
+    main()
