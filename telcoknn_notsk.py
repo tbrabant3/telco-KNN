@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import shuffle
+from scipy.spatial import distance
 
 
 def load_dataset(filename, split, training_set=[], test_set=[]):
@@ -51,14 +52,18 @@ def euclidean_distance(instance1, instance2):
     sub = np.array(instance1) - np.array(instance2)
     square = np.square(sub, dtype=np.float64)
     sum = np.sum(square.all(), dtype=np.float64)
-
     return np.sqrt(sum)
+
+
+def minkowski(instance1, instance2):
+    return distance.minkowski(np.array(instance1), np.array(instance2))
 
 
 def get_neighbors(training_set, test_instance, k):
     distances = []
     for x in range(len(training_set)):
-        dist = euclidean_distance(test_instance, training_set[x])
+        # dist = euclidean_distance(test_instance, training_set[x])
+        dist = minkowski(test_instance, training_set[x])
         distances.append((training_set[x], dist))
     distances.sort(key=operator.itemgetter(1))
 
@@ -105,7 +110,7 @@ def main():
         neighbors = get_neighbors(training_set, test_set[x], k)
         result = get_response(neighbors)
         predictions.append(result)
-        print('predicted=' + repr(result) + ', actual=' + repr(test_set[x][-1]))
+        # print('predicted=' + repr(result) + ', actual=' + repr(test_set[x][-1]))
     accuracy = get_accuracy(test_set, predictions)
     print('Accuracy: ' + repr(accuracy) + '%')
 
